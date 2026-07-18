@@ -1,0 +1,5 @@
+vendor/
+bench/*.json
+.envrc.claude
+.env
+.DS_Store

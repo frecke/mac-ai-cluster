@@ -1,0 +1,38 @@
+name: ci
+
+on:
+  push: { branches: [main] }
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: shellcheck (gate on errors)
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck
+          # SC1091: lib.sh is sourced at runtime, not resolvable statically.
+          shellcheck -e SC1091 -S error scripts/*.sh
+
+      - name: shellcheck (full report, non-blocking)
+        continue-on-error: true
+        run: shellcheck -e SC1091 -S style scripts/*.sh
+
+      - name: zsh parse
+        run: |
+          sudo apt-get install -y -qq zsh
+          zsh -n zsh/aicluster.plugin.zsh
+
+      - name: justfile
+        run: |
+          curl -fsSL https://just.systems/install.sh | bash -s -- --to /usr/local/bin
+          just --justfile justfile --summary
+          just --fmt --check --unstable
+
+      - name: templates render
+        run: |
+          test -f templates/aicluster.mise.toml
+          test -f templates/AGENTS.md

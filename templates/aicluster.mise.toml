@@ -1,0 +1,14 @@
+# Local inference cluster — project overrides.
+# Merged by mise on top of your global config. Delete any line to inherit.
+[env]
+EXO_API   = "http://localhost:52415"
+AI_TIER   = "throughput"          # throughput | advisor
+AI_MODEL  = "{{MODEL}}"
+
+[tasks.ai]
+description = "Ask the project's model a question"
+run = 'aic ask "$AI_MODEL" "$*"'
+
+[tasks."ai:up"]
+description = "Start the cluster at this project's tier"
+run = 'aic start-ai-cluster "$AI_TIER"'

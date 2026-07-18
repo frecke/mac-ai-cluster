@@ -1,0 +1,25 @@
+[tools]
+node = "22"
+uv   = "latest"
+jq   = "latest"
+rust = { version = "nightly", profile = "minimal" }
+
+[env]
+# Change this — it isolates your cluster from others on the same network.
+EXO_LIBP2P_NAMESPACE = "my-cluster"
+EXO_API = "http://localhost:52415"
+
+# Model tiers — change here, everything else follows.
+MODEL_FAST = "Qwen3-Coder-30B-A3B-Instruct-4bit"
+MODEL_TINY = "Qwen3-8B-4bit"
+MODEL_BIG  = "gpt-oss-120b"
+
+[tasks.info]
+description = "Show resolved tool + env state"
+run = """
+echo "node: $(node --version)"
+echo "uv:   $(uv --version)"
+echo "jq:   $(jq --version)"
+echo "rust: $(rustc --version)"
+echo "ns:   $EXO_LIBP2P_NAMESPACE"
+"""

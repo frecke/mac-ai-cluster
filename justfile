@@ -1,5 +1,5 @@
 set shell := ["bash", "-euo", "pipefail", "-c"]
-set dotenv-load := true
+set dotenv-load
 
 export EXO_API := env_var_or_default("EXO_API", "http://localhost:52415")
 
@@ -14,7 +14,7 @@ _default:
 # Full first-run setup for THIS machine. Idempotent — safe to re-run.
 bootstrap: _preflight deps macmon exo-install agents
     @echo ""
-    @echo "✓ bootstrap complete on {{role}} node"
+    @echo "✓ bootstrap complete on {{ role }} node"
     @echo "  next: just start-ai-cluster"
 
 # Verify the machine is in a state worth building on
@@ -35,7 +35,7 @@ macmon:
 # Show current vs target wired limit
 gpu-status:
     @echo "current: $(sysctl -n iogpu.wired_limit_mb) MB  (0 = macOS default)"
-    @echo "target:  $(bash scripts/gpu-wired.sh {{role}} --print-only) MB  (role={{role}})"
+    @echo "target:  $(bash scripts/gpu-wired.sh {{ role }} --print-only) MB  (role={{ role }})"
 
 # Remove the old persistent LaunchDaemon, if you ever installed one
 gpu-unpersist:
@@ -45,20 +45,19 @@ gpu-unpersist:
 exo-install:
     @bash scripts/exo-install.sh
 
-
 # ---------------------------------------------------------------- session
 
 # Start a dev session: raise memory limit (this boot only), launch EXO, load a tier.
 # profile: throughput (default) | advisor | none
 start-ai-cluster profile="throughput":
-    @bash scripts/start.sh "{{profile}}"
+    @bash scripts/start.sh "{{ profile }}"
 
 # Stop everything and hand memory back to the OS.
 stop-ai-cluster:
     @bash scripts/stop.sh
 
 alias start := start-ai-cluster
-alias stop  := stop-ai-cluster
+alias stop := stop-ai-cluster
 
 # ---------------------------------------------------------------- cluster
 
@@ -74,12 +73,12 @@ link-check:
 
 # Placement options for a model (Tensor+jaccl = RDMA path)
 previews model:
-    @curl -s "$EXO_API/instance/previews?model_id={{model}}" \
+    @curl -s "$EXO_API/instance/previews?model_id={{ model }}" \
       | jq '.previews[] | {sharding, instance_meta, error, mem: .memory_delta_by_node}'
 
 # Load a model, preferring tensor-parallel / RDMA placement
 load model:
-    @bash scripts/load-model.sh "{{model}}"
+    @bash scripts/load-model.sh "{{ model }}"
 
 # Unload everything
 unload-all:
@@ -87,13 +86,13 @@ unload-all:
 
 # Switch tier config: throughput | advisor
 config profile:
-    @bash scripts/profile.sh "{{profile}}"
+    @bash scripts/profile.sh "{{ profile }}"
 
 # Quick smoke test against a loaded model
 ask model prompt:
     @curl -sN -X POST "$EXO_API/v1/chat/completions" \
       -H 'Content-Type: application/json' \
-      -d "$(jq -n --arg m "{{model}}" --arg p "{{prompt}}" \
+      -d "$(jq -n --arg m "{{ model }}" --arg p "{{ prompt }}" \
             '{model:$m, messages:[{role:"user",content:$p}], stream:false}')" \
       | jq -r '.choices[0].message.content'
 
@@ -117,7 +116,7 @@ zsh-bench:
 # Wire another repo to this cluster. Additive, idempotent, vendors nothing.
 # usage: just project-init ~/code/myapp [throughput|advisor]
 project-init dir="." tier="throughput":
-    @bash scripts/project-init.sh "{{dir}}" "{{tier}}"
+    @bash scripts/project-init.sh "{{ dir }}" "{{ tier }}"
 
 # ---------------------------------------------------------------- agents
 
@@ -140,9 +139,9 @@ rdma-apply:
 # Benchmark a model across placements. Needs exo source checkout (just exo-src)
 bench model="gpt-oss-120b" pp="512,2048,8192" tg="256":
     @cd vendor/exo && uv run bench/exo_bench.py \
-        --model {{model}} --pp {{pp}} --tg {{tg}} \
+        --model {{ model }} --pp {{ pp }} --tg {{ tg }} \
         --max-nodes 2 --repeat 3 \
-        --json-out "../../bench/$(date +%Y%m%d-%H%M)-{{model}}.json"
+        --json-out "../../bench/$(date +%Y%m%d-%H%M)-{{ model }}.json"
 
 # Clone exo source into vendor/ (needed for bench + rdma script)
 exo-src:

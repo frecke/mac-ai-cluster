@@ -1,8 +1,10 @@
 [tools]
-node = "22"
-uv   = "latest"
-jq   = "latest"
-rust = { version = "nightly", profile = "minimal" }
+node       = "22"
+uv         = "latest"
+jq         = "latest"
+rust       = { version = "nightly", profile = "minimal" }
+shellcheck = "latest"
+just       = "1.56.0"
 
 [env]
 # Change this — it isolates your cluster from others on the same network.

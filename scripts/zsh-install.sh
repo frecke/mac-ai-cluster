@@ -50,7 +50,7 @@ fi
 # ── antidote bundle ───────────────────────────────────────────────────
 hdr "antidote"
 ZP="${ZDOTDIR:-$HOME}/.zsh_plugins.txt"
-LINE="path:$PLUGIN"
+LINE="$PLUGIN"
 if [ -f "$ZP" ]; then
   if grep -qF "$LINE" "$ZP"; then
     ok "already present in $ZP"

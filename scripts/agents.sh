@@ -3,7 +3,8 @@ cd "$(dirname "$0")/.."; source scripts/lib.sh
 FAST="$MODEL_FAST"; BIG="$MODEL_BIG"; TINY="$MODEL_TINY"
 
 mkdir -p ~/.config/opencode
-jq -n --arg u "$EXO_API/v1" --arg f "$FAST" --arg b "$BIG" --arg t "$TINY" '{
+OPENCODE_CONFIG=~/.config/opencode/opencode.json
+NEW_OPENCODE="$(jq -n --arg u "$EXO_API/v1" --arg f "$FAST" --arg b "$BIG" --arg t "$TINY" '{
   "$schema": "https://opencode.ai/config.json",
   provider: { exo: {
     npm: "@ai-sdk/openai-compatible",
@@ -13,8 +14,14 @@ jq -n --arg u "$EXO_API/v1" --arg f "$FAST" --arg b "$BIG" --arg t "$TINY" '{
       ($f): { name: "Workhorse 30b" },
       ($b): { name: "Advisor 120b (pooled)" },
       ($t): { name: "Tiny 8b" }
-    }}}}' > ~/.config/opencode/opencode.json
-ok "opencode -> ~/.config/opencode/opencode.json"
+    }}}}')"
+if [ -f "$OPENCODE_CONFIG" ] && ! diff -q <(printf '%s\n' "$NEW_OPENCODE") "$OPENCODE_CONFIG" >/dev/null 2>&1; then
+  BAK="$OPENCODE_CONFIG.bak.$(date +%Y%m%d-%H%M%S)"
+  cp "$OPENCODE_CONFIG" "$BAK"
+  warn "existing opencode config differs — backed up -> $BAK"
+fi
+printf '%s\n' "$NEW_OPENCODE" > "$OPENCODE_CONFIG"
+ok "opencode -> $OPENCODE_CONFIG"
 
 mkdir -p ~/.codex
 cat > ~/.codex/config.toml <<TOML

@@ -1,6 +1,6 @@
 # aicluster — zsh plugin for the two-Mac inference cluster
 #
-# antidote:   echo 'path:~/code/mac-ai-cluster/zsh' >> ~/.zsh_plugins.txt
+# antidote:   echo '~/code/mac-ai-cluster/zsh' >> ~/.zsh_plugins.txt
 # oh-my-zsh:  just zsh-install   (symlinks into $ZSH_CUSTOM/plugins)
 #
 # Design rule: no network calls and no subprocesses at load time.

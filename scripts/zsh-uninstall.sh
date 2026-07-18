@@ -9,9 +9,9 @@ if [ -L "$T" ]; then rm -f "$T"; ok "removed symlink $T"
 else note "no OMZ symlink"; fi
 
 ZP="${ZDOTDIR:-$HOME}/.zsh_plugins.txt"
-if [ -f "$ZP" ] && grep -qF "path:$PLUGIN" "$ZP"; then
+if [ -f "$ZP" ] && grep -qF "$PLUGIN" "$ZP"; then
   cp "$ZP" "$ZP.bak.$(date +%Y%m%d-%H%M%S)"
-  grep -vF -e "path:$PLUGIN" -e "# local: two-Mac inference cluster" "$ZP" > "$ZP.new"
+  grep -vF -e "$PLUGIN" -e "# local: two-Mac inference cluster" "$ZP" > "$ZP.new"
   mv "$ZP.new" "$ZP"
   ok "removed the line from $ZP (backup kept)"
 else

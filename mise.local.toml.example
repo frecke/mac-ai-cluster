@@ -1,0 +1,5 @@
+# Copy to mise.local.toml (gitignored) and set for this specific machine.
+# Overrides scripts/role.sh's chip-based guess — needed on any hardware pairing
+# other than the M5 Pro (head) / M4 Pro (worker) this repo was written against.
+[env]
+NODE_ROLE = "head" # or "worker"

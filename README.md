@@ -5,7 +5,9 @@ Two-Mac local inference cluster. Clone on both machines, run `just bootstrap`.
 - **head** (M5 Pro 48GB) — coding agent + its share of pooled inference
 - **worker** (M4 Pro 48GB) — inference only
 
-Role is auto-detected from the chip. Override with `NODE_ROLE=head|worker`.
+Role is auto-detected from the chip (M5 → head, M4 → worker). On any other
+hardware pairing, set it explicitly: `cp mise.local.toml.example mise.local.toml`
+and edit `NODE_ROLE`.
 
 ## Prereqs
 

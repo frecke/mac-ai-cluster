@@ -21,9 +21,9 @@ summary() {
 EXO_API="${EXO_API:-http://localhost:52415}"
 
 # Fallbacks so scripts work even if mise env isn't activated in this shell.
-MODEL_FAST="${MODEL_FAST:-Qwen3-Coder-30B-A3B-Instruct-4bit}"
-MODEL_TINY="${MODEL_TINY:-Qwen3-8B-4bit}"
-MODEL_BIG="${MODEL_BIG:-gpt-oss-120b}"
+MODEL_FAST="${MODEL_FAST:-mlx-community/Qwen3-Coder-Next-4bit}"
+MODEL_TINY="${MODEL_TINY:-mlx-community/Qwen3.5-9B-4bit}"
+MODEL_BIG="${MODEL_BIG:-mlx-community/gpt-oss-120b-MXFP4-Q8}"
 
 chip() { sysctl -n machdep.cpu.brand_string 2>/dev/null || echo unknown; }
 ram_gb() { echo $(( $(sysctl -n hw.memsize) / 1024 / 1024 / 1024 )); }

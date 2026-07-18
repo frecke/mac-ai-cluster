@@ -12,9 +12,10 @@ EXO_LIBP2P_NAMESPACE = "my-cluster"
 EXO_API = "http://localhost:52415"
 
 # Model tiers — change here, everything else follows.
-MODEL_FAST = "Qwen3-Coder-30B-A3B-Instruct-4bit"
-MODEL_TINY = "Qwen3-8B-4bit"
-MODEL_BIG  = "gpt-oss-120b"
+# Verified against a live EXO instance's /models registry on 2026-07-19.
+MODEL_FAST = "mlx-community/Qwen3-Coder-Next-4bit"
+MODEL_TINY = "mlx-community/Qwen3.5-9B-4bit"
+MODEL_BIG  = "mlx-community/gpt-oss-120b-MXFP4-Q8"
 
 [tasks.info]
 description = "Show resolved tool + env state"

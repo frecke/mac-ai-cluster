@@ -142,9 +142,9 @@ _aic() {
       models=(${(f)"$(_aicluster_state | command jq -r '.instances[]?.model_id' 2>/dev/null)"})
       models=(${models:#})   # drop empties, else $#models is 1 when nothing loaded
       (( $#models )) || models=(
-        "${MODEL_FAST:-Qwen3-Coder-30B-A3B-Instruct-4bit}"
-        "${MODEL_TINY:-Qwen3-8B-4bit}"
-        "${MODEL_BIG:-gpt-oss-120b}"
+        "${MODEL_FAST:-mlx-community/Qwen3-Coder-Next-4bit}"
+        "${MODEL_TINY:-mlx-community/Qwen3.5-9B-4bit}"
+        "${MODEL_BIG:-mlx-community/gpt-oss-120b-MXFP4-Q8}"
       )
       _describe -t models 'model' models ;;
   esac

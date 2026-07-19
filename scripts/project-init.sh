@@ -3,7 +3,15 @@
 # usage: project-init.sh [target-dir] [tier]
 cd "$(dirname "$0")/.."; source scripts/lib.sh
 ROOT="$(pwd -P)"
-TARGET="$(cd "${1:-$PWD}" && pwd -P)"
+# Relative dirs resolve against where the user invoked just/aic (INVOKE_DIR,
+# set by the recipe via invocation_directory()) — never against this repo,
+# which `cd` above made our cwd.
+IN_DIR="${INVOKE_DIR:-$PWD}"
+RAW="${1:-$IN_DIR}"
+case "$RAW" in
+  /*) TARGET="$(cd "$RAW" && pwd -P)" ;;
+  *)  TARGET="$(cd "$IN_DIR" && cd "$RAW" && pwd -P)" ;;
+esac
 TIER="${2:-throughput}"
 
 [ "$TARGET" = "$ROOT" ] && { bad "that's the cluster repo itself"; exit 1; }

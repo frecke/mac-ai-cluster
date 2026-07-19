@@ -126,8 +126,9 @@ zsh-bench:
 
 # Wire another repo to this cluster. Additive, idempotent, vendors nothing.
 # usage: just project-init ~/code/myapp [throughput|advisor]
-project-init dir="." tier="throughput":
-    @bash scripts/project-init.sh "{{ dir }}" "{{ tier }}"
+# Bare or relative dirs resolve against where YOU ran the command, not this repo.
+project-init dir="" tier="throughput":
+    @INVOKE_DIR="{{ invocation_directory() }}" bash scripts/project-init.sh "{{ dir }}" "{{ tier }}"
 
 # ---------------------------------------------------------------- agents
 

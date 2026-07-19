@@ -95,9 +95,9 @@ aicluster_prompt_info() {
   (( $+commands[jq] )) || return 0
   local st n m
   st=$(_aicluster_state) || return 0
-  n=${$(print -r -- $st | command jq -r '.nodes | length' 2>/dev/null):-0}
+  n=${$(print -r -- $st | command jq -r '.topology.nodes // [] | length' 2>/dev/null):-0}
   (( n > 0 )) || return 0
-  m=${$(print -r -- $st | command jq -r '[.instances[]?.model_id] | length' 2>/dev/null):-0}
+  m=${$(print -r -- $st | command jq -r '[.instances[]?[]?.shardAssignments.modelId] | length' 2>/dev/null):-0}
   print -n "${ZSH_THEME_AICLUSTER_PREFIX}ai ${n}n/${m}m${ZSH_THEME_AICLUSTER_SUFFIX}"
 }
 
@@ -139,7 +139,7 @@ _aic() {
       _describe -t profiles 'profile' profiles ;;
     load|previews|ask|bench)
       local -a models
-      models=(${(f)"$(_aicluster_state | command jq -r '.instances[]?.model_id' 2>/dev/null)"})
+      models=(${(f)"$(_aicluster_state | command jq -r '.instances[]?[]?.shardAssignments.modelId' 2>/dev/null)"})
       models=(${models:#})   # drop empties, else $#models is 1 when nothing loaded
       (( $#models )) || models=(
         "${MODEL_FAST:-mlx-community/Qwen3-Coder-Next-4bit}"

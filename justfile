@@ -63,9 +63,15 @@ alias stop := stop-ai-cluster
 
 # Nodes + loaded instances
 cluster-status:
-    @curl -s "$EXO_API/state" | jq '{ \
-        nodes: [.nodes[]? | {id, model: .device_info.model, mem_gb: (.device_info.memory/1024/1024/1024 | floor)}], \
-        instances: [.instances[]? | {id, model_id}] }'
+    @curl -s "$EXO_API/state" | jq '. as $s | { \
+        nodes: [$s.topology.nodes[]? | { \
+            name: $s.nodeIdentities[.].friendlyName, \
+            chip: $s.nodeIdentities[.].chipId, \
+            ram_gb: (($s.nodeMemory[.].ramTotal.inBytes // 0) / 1073741824 | floor), \
+            free_gb: (($s.nodeMemory[.].ramAvailable.inBytes // 0) / 1073741824 | floor)}], \
+        instances: [$s.instances // {} | to_entries[] | { \
+            id: .key, \
+            model: (.value[]?.shardAssignments.modelId)}] }'
 
 # Is the cluster on RDMA or falling back to TCP ring?
 link-check:

@@ -25,11 +25,11 @@ exo_up || { bad "EXO API never came up at $EXO_API"; exit 1; }
 ok "EXO API up"
 
 # 4. wait for the peer before loading anything pooled
-NODES=$(curl -s "$EXO_API/state" | jq '.nodes | length')
+NODES=$(curl -s "$EXO_API/state" | jq '.topology.nodes // [] | length')
 if [ "$NODES" -lt 2 ]; then
   printf "  waiting for peer node"
   for _ in $(seq 1 30); do
-    NODES=$(curl -s "$EXO_API/state" | jq '.nodes | length')
+    NODES=$(curl -s "$EXO_API/state" | jq '.topology.nodes // [] | length')
     [ "$NODES" -ge 2 ] && break; printf "."; sleep 1
   done
   echo

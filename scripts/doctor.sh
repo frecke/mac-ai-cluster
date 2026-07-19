@@ -109,7 +109,7 @@ else bad "EXO.app not found (just exo-install)"; fi
 if exo_up; then
   ok "API reachable at $EXO_API"
 
-  NODES="$(curl -s "$EXO_API/state" | jq '.nodes | length')"
+  NODES="$(curl -s "$EXO_API/state" | jq '.topology.nodes // [] | length')"
   case "$NODES" in
     0|1) warn "$NODES node visible — peer not clustered"
          note "check: same EXO_LIBP2P_NAMESPACE, same OS build, peer awake" ;;
@@ -124,7 +124,7 @@ if exo_up; then
     *) [ "$NODES" -gt 1 ] && warn "could not determine transport" || true ;;
   esac
 
-  LOADED="$(curl -s "$EXO_API/state" | jq -r '[.instances[]?.model_id] | join(", ")')"
+  LOADED="$(curl -s "$EXO_API/state" | jq -r '[.instances[]?[]?.shardAssignments.modelId] | join(", ")')"
   if [ -n "$LOADED" ]; then ok "loaded: $LOADED"; else note "no models loaded (just config throughput)"; fi
 else
   bad "API unreachable at $EXO_API — is EXO running?"

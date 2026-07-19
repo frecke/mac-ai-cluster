@@ -56,6 +56,11 @@ start-ai-cluster profile="throughput":
 stop-ai-cluster:
     @bash scripts/stop.sh
 
+# Keep THIS Mac awake: no sleep + caffeinate + high power. For long agent
+# loops on the head; the worker gets it automatically. Bare = toggle.
+awake mode="toggle":
+    @bash scripts/power.sh "{{ mode }}"
+
 alias start := start-ai-cluster
 alias stop := stop-ai-cluster
 

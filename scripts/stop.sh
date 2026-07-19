@@ -29,7 +29,7 @@ sudo bash scripts/gpu-wired.sh reset
 
 # 5. hand the power posture back: caffeinate off, powermode restored, sleep on
 if [ "$ROLE" = "worker" ]; then
-  bash scripts/worker-power.sh off
+  bash scripts/power.sh off
 fi
 
 # 6. report what came back

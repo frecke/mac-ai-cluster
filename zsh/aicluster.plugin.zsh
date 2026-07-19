@@ -137,6 +137,9 @@ _aic() {
       else _describe -t profiles 'tier' profiles; fi ;;
     start-ai-cluster|config)
       _describe -t profiles 'profile' profiles ;;
+    awake)
+      local -a modes=(toggle on off)
+      _describe -t modes 'mode' modes ;;
     load|previews|ask|bench)
       local -a models
       models=(${(f)"$(_aicluster_state | command jq -r '.instances[]?[]?.shardAssignments.modelId' 2>/dev/null)"})

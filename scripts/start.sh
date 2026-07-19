@@ -11,7 +11,7 @@ sudo bash scripts/gpu-wired.sh "$ROLE"
 
 # 2. worker power posture: no sleep + caffeinate + high power mode
 if [ "$ROLE" = "worker" ]; then
-  bash scripts/worker-power.sh on
+  bash scripts/power.sh on
 fi
 
 # 3. bring EXO up

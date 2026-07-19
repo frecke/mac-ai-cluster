@@ -140,7 +140,7 @@ _aic() {
     awake)
       local -a modes=(toggle on off)
       _describe -t modes 'mode' modes ;;
-    load|previews|ask|bench)
+    load|previews|ask|bench|perf)
       local -a models
       models=(${(f)"$(_aicluster_state | command jq -r '.instances[]?[]?.shardAssignments.modelId' 2>/dev/null)"})
       models=(${models:#})   # drop empties, else $#models is 1 when nothing loaded

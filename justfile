@@ -66,6 +66,14 @@ alias stop := stop-ai-cluster
 
 # ---------------------------------------------------------------- cluster
 
+# Live dashboard: nodes, instances, runner states, download progress
+watch interval="3":
+    @bash scripts/watch.sh "{{ interval }}"
+
+# TTFT + tokens/sec via the same endpoint opencode uses; history -> bench/perf.jsonl
+perf model="" tg="128":
+    @bash scripts/perf.sh "{{ model }}" "{{ tg }}"
+
 # Nodes + loaded instances
 cluster-status:
     @curl -s "$EXO_API/state" | jq '. as $s | { \

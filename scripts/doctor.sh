@@ -97,8 +97,25 @@ else
   esac
 fi
 
-if ioreg -l 2>/dev/null | grep -qi rdma; then ok "RDMA present in IORegistry"
-else warn "RDMA not enabled — needs 'rdma_ctl enable' in Recovery (just rdma-howto)"; fi
+# rdma_ctl status: EXO reports it per node — authoritative. ioreg is only a
+# local fallback when EXO is down (and can false-positive on driver presence).
+if exo_up; then
+  read -r RDMA_ON RDMA_N <<<"$(curl -s "$EXO_API/state" \
+    | jq -r '.nodeRdmaCtl // {} | "\([.[] | select(.enabled)] | length) \(length)"')"
+  if [ "${RDMA_N:-0}" -gt 0 ]; then
+    if [ "$RDMA_ON" -eq "$RDMA_N" ]; then
+      ok "rdma_ctl enabled on all $RDMA_N nodes"
+    else
+      warn "rdma_ctl enabled on $RDMA_ON of $RDMA_N nodes — run 'rdma_ctl enable' in Recovery on each (just rdma-howto)"
+    fi
+  else
+    warn "no nodes reporting rdma_ctl status"
+  fi
+elif ioreg -l 2>/dev/null | grep -qi rdma; then
+  note "RDMA driver present locally — EXO down, can't verify rdma_ctl (just rdma-howto)"
+else
+  warn "RDMA not enabled — needs 'rdma_ctl enable' in Recovery (just rdma-howto)"
+fi
 
 # ─────────────────────────────────────────────────────────── exo
 hdr "EXO"

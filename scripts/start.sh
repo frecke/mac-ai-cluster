@@ -34,8 +34,11 @@ if [ "$NODES" -lt 2 ]; then
   done
   echo
 fi
-[ "$NODES" -ge 2 ] && ok "$NODES nodes clustered" \
-  || warn "only $NODES node — 'advisor' profile needs 2 (run start on the other Mac)"
+if [ "$NODES" -ge 2 ]; then
+  ok "$NODES nodes clustered"
+else
+  warn "only $NODES node — 'advisor' profile needs 2 (run start on the other Mac)"
+fi
 
 # 5. load the tier
 [ "$PROFILE" = "none" ] || bash scripts/profile.sh "$PROFILE"

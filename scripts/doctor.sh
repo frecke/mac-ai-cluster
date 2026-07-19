@@ -33,7 +33,8 @@ esac
 hdr "Toolchain"
 
 for t in mise just uv node jq cargo rustc; do
-  if have "$t"; then ok "$t $("$t" --version 2>/dev/null | head -1 | awk '{print $2}')"
+  if have "$t"; then
+    ok "$t $("$t" --version 2>/dev/null | head -1 | grep -oE '[vV]?[0-9]+(\.[0-9]+)+(-[A-Za-z0-9]+)?' | head -1)"
   else bad "$t missing"; fi
 done
 
@@ -115,7 +116,7 @@ if exo_up; then
     *)   ok "$NODES nodes clustered" ;;
   esac
 
-  META="$(curl -s "$EXO_API/instance/previews?model_id=llama-3.2-1b" 2>/dev/null \
+  META="$(curl -s "$EXO_API/instance/previews?model_id=mlx-community/Llama-3.2-1B-Instruct-4bit" 2>/dev/null \
           | jq -r '[.previews[]? | select(.error==null) | .instance_meta] | unique | join(",")' 2>/dev/null || echo "")"
   case "$META" in
     *jaccl*) ok "jaccl placement available — RDMA transport live" ;;
@@ -124,7 +125,7 @@ if exo_up; then
   esac
 
   LOADED="$(curl -s "$EXO_API/state" | jq -r '[.instances[]?.model_id] | join(", ")')"
-  [ -n "$LOADED" ] && ok "loaded: $LOADED" || note "no models loaded (just config throughput)"
+  if [ -n "$LOADED" ]; then ok "loaded: $LOADED"; else note "no models loaded (just config throughput)"; fi
 else
   bad "API unreachable at $EXO_API — is EXO running?"
 fi
@@ -137,12 +138,12 @@ if [ "$ROLE" = "worker" ]; then
   elif exo_up; then warn "EXO is running but worker can sleep — it will drop mid-inference"
   else note "sleep enabled — normal while stopped"; fi
 fi
-pmset -g ps 2>/dev/null | grep -qi 'AC Power' && ok "on AC power" || warn "on battery — expect throttling"
+if pmset -g ps 2>/dev/null | grep -qi 'AC Power'; then ok "on AC power"; else warn "on battery — expect throttling"; fi
 
 # ─────────────────────────────────────────────────────────── agents
 hdr "Agent configs"
 
-[ -f ~/.config/opencode/opencode.json ] && ok "opencode configured" || warn "opencode not configured (just agents)"
-[ -f ~/.codex/config.toml ] && ok "codex configured" || note "codex not configured (just agents)"
+if [ -f ~/.config/opencode/opencode.json ]; then ok "opencode configured"; else warn "opencode not configured (just agents)"; fi
+if [ -f ~/.codex/config.toml ]; then ok "codex configured"; else note "codex not configured (just agents)"; fi
 
 summary

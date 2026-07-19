@@ -2,7 +2,7 @@
 # Merged by mise on top of your global config. Delete any line to inherit.
 [env]
 EXO_API   = "http://localhost:52415"
-AI_TIER   = "throughput"          # throughput | advisor
+AI_TIER   = "{{TIER}}"             # throughput | advisor
 AI_MODEL  = "{{MODEL}}"
 
 [tasks.ai]

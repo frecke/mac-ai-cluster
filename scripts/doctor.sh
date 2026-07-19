@@ -137,6 +137,18 @@ if [ "$ROLE" = "worker" ]; then
   if pmset -g 2>/dev/null | grep -q 'SleepDisabled.*1'; then ok "sleep disabled (session active)"
   elif exo_up; then warn "EXO is running but worker can sleep — it will drop mid-inference"
   else note "sleep enabled — normal while stopped"; fi
+
+  AICACHE="${XDG_CACHE_HOME:-$HOME/.cache}/aicluster"
+  if [ -f "$AICACHE/caffeinate.pid" ] && kill -0 "$(cat "$AICACHE/caffeinate.pid")" 2>/dev/null; then
+    ok "caffeinate active (pid $(cat "$AICACHE/caffeinate.pid"))"
+  elif exo_up; then warn "caffeinate not running — start-ai-cluster starts it"
+  else note "caffeinate not running — normal while stopped"; fi
+
+  if pmset -g 2>/dev/null | grep -qE 'powermode +2'; then ok "high power mode"
+  elif pmset -g 2>/dev/null | grep -q powermode; then
+    if exo_up; then warn "power mode not high — start-ai-cluster sets it"
+    else note "power mode automatic — normal while stopped"; fi
+  fi
 fi
 if pmset -g ps 2>/dev/null | grep -qi 'AC Power'; then ok "on AC power"; else warn "on battery — expect throttling"; fi
 

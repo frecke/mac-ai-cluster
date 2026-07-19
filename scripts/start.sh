@@ -9,9 +9,9 @@ hdr "Starting AI cluster  ${DIM}(role=$ROLE, profile=$PROFILE)${RST}"
 # 1. session-scoped memory limit
 sudo bash scripts/gpu-wired.sh "$ROLE"
 
-# 2. keep worker awake for as long as the cluster runs
+# 2. worker power posture: no sleep + caffeinate + high power mode
 if [ "$ROLE" = "worker" ]; then
-  sudo pmset -a disablesleep 1 && ok "sleep disabled"
+  bash scripts/worker-power.sh on
 fi
 
 # 3. bring EXO up

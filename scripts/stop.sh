@@ -27,9 +27,9 @@ pkill -f 'uv run exo' 2>/dev/null && ok "stopped source-run exo" || true
 # 4. hand the memory back
 sudo bash scripts/gpu-wired.sh reset
 
-# 5. let the worker sleep again
+# 5. hand the power posture back: caffeinate off, powermode restored, sleep on
 if [ "$ROLE" = "worker" ]; then
-  sudo pmset -a disablesleep 0 && ok "sleep re-enabled"
+  bash scripts/worker-power.sh off
 fi
 
 # 6. report what came back
